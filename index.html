@@ -43,6 +43,11 @@
         玩家得分: <span id="player-score">0</span> | 電腦得分: <span id="computer-score">0</span>
     </div>
 
+    <!-- 音效 -->
+    <audio id="win-sound" src="https://www.soundjay.com/buttons/button-1.mp3"></audio>
+    <audio id="lose-sound" src="https://www.soundjay.com/buttons/button-2.mp3"></audio>
+    <audio id="tie-sound" src="https://www.soundjay.com/buttons/button-3.mp3"></audio>
+
     <script>
         let playerScore = 0;
         let computerScore = 0;
@@ -54,11 +59,16 @@
             let result = '';
             let icon = '';
             let title = '';
+
+            const winSound = document.getElementById('win-sound');
+            const loseSound = document.getElementById('lose-sound');
+            const tieSound = document.getElementById('tie-sound');
             
             if (playerChoice === computerChoice) {
                 result = '平手！';
                 icon = 'info';
                 title = '平手';
+                tieSound.play();  // 播放平手音效
             } else if (
                 (playerChoice === '剪刀' && computerChoice === '布') ||
                 (playerChoice === '石頭' && computerChoice === '剪刀') ||
@@ -68,11 +78,13 @@
                 icon = 'success';
                 title = '贏了';
                 playerScore++;
+                winSound.play();  // 播放贏音效
             } else {
                 result = '你輸了！';
                 icon = 'error';
                 title = '輸了';
                 computerScore++;
+                loseSound.play();  // 播放輸音效
             }
 
             updateScoreboard();
@@ -83,15 +95,10 @@
                     icon: icon,
                     showCancelButton: true,  // 顯示第二個按鈕
                     confirmButtonText: '再玩一次',
-                    cancelButtonText: '查看結果'
+                    cancelButtonText: '全部重新開始'
                 }).then((result) => {
                     if (result.isDismissed) {
-                        Swal.fire({
-                            title: '當前比分',
-                            text: `玩家得分: ${playerScore}\n電腦得分: ${computerScore}`,
-                            icon: 'info',
-                            confirmButtonText: '好吧'
-                        });
+                        resetGame();
                     }
                 });
             }
