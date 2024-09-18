@@ -15,6 +15,24 @@
             width: 100px;
             cursor: pointer;
             margin: 10px;
+            transition: transform 0.2s, background-color 0.2s, color 0.2s; /* 添加過渡效果 */
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .choice:hover {
+            transform: scale(1.2); /* 滑鼠移上時放大 */
+            background-color: #ffcc00; /* 更換背景顏色 */
+            color: white; /* 更換文字顏色 */
+        }
+        .choice2:hover {
+            transform: scale(1.2); /* 滑鼠移上時放大 */
+            background-color: #00ff6a; /* 更換背景顏色 */
+            color: white; /* 更換文字顏色 */
+        }
+        .choice3:hover {
+            transform: scale(1.2); /* 滑鼠移上時放大 */
+            background-color: #0022ff; /* 更換背景顏色 */
+            color: white; /* 更換文字顏色 */
         }
         #result {
             margin-top: 20px;
@@ -34,9 +52,9 @@
 <body>
     <h1>剪刀石頭布</h1>
     <div class="choices-container">
-        <img src="https://img.icons8.com/ios-filled/100/000000/hand-scissors.png" alt="剪刀" class="choice" onclick="playGame('剪刀')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/hand-rock.png" alt="石頭" class="choice" onclick="playGame('石頭')">
-        <img src="https://img.icons8.com/ios-filled/100/000000/hand.png" alt="布" class="choice" onclick="playGame('布')">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand-scissors.png" alt="剪刀" class="choice" onclick="playGame('剪刀')" id="scissors-choice">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand-rock.png" alt="石頭" class="choice choice2" onclick="playGame('石頭')" id="rock-choice">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand.png" alt="布" class="choice choice" onclick="playGame('布')" id="paper-choice">
     </div>
     
     <div id="scoreboard">
@@ -59,7 +77,8 @@
             let result = '';
             let icon = '';
             let title = '';
-
+            let backgroundColor = '';
+            let text_color ='';
             const winSound = document.getElementById('win-sound');
             const loseSound = document.getElementById('lose-sound');
             const tieSound = document.getElementById('tie-sound');
@@ -68,6 +87,7 @@
                 result = '平手！';
                 icon = 'info';
                 title = '平手';
+                backgroundColor = '#ffff00'; // 黃色背景
                 tieSound.play();  // 播放平手音效
             } else if (
                 (playerChoice === '剪刀' && computerChoice === '布') ||
@@ -77,12 +97,15 @@
                 result = '你贏了！';
                 icon = 'success';
                 title = '贏了';
+                backgroundColor = '#00ff00'; // 綠色背景
                 playerScore++;
                 winSound.play();  // 播放贏音效
             } else {
                 result = '你輸了！';
                 icon = 'error';
                 title = '輸了';
+                backgroundColor = '#ff0000'; // 紅色背景
+                text_color = '#ffffff';
                 computerScore++;
                 loseSound.play();  // 播放輸音效
             }
@@ -95,7 +118,11 @@
                     icon: icon,
                     showCancelButton: true,  // 顯示第二個按鈕
                     confirmButtonText: '再玩一次',
-                    cancelButtonText: '全部重新開始'
+                    cancelButtonText: '全部重新開始',
+                    customClass: {
+                        popup: 'swal2-popup',  // 為了可以在不同情況下指定樣式
+                    },
+                    background: backgroundColor  // 改變背景顏色
                 }).then((result) => {
                     if (result.isDismissed) {
                         resetGame();
@@ -115,7 +142,8 @@
                     title: '你贏得了比賽！',
                     text: '恭喜你贏了三次！比賽重新開始。',
                     icon: 'success',
-                    confirmButtonText: '繼續'
+                    confirmButtonText: '繼續',
+                    background: '#00ff00'  // 綠色背景
                 }).then(() => resetGame());
                 return true;
             } else if (computerScore === 3) {
@@ -123,7 +151,8 @@
                     title: '電腦贏得了比賽！',
                     text: '電腦贏了三次！比賽重新開始。',
                     icon: 'error',
-                    confirmButtonText: '繼續'
+                    confirmButtonText: '繼續',
+                    background: '#ff330013'  // 紅色背景
                 }).then(() => resetGame());
                 return true;
             }
