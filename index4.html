@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪刀石頭布遊戲</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .choice {
+            width: 100px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+        }
+        .choices-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #scoreboard {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>剪刀石頭布</h1>
+    <div class="choices-container">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand-scissors.png" alt="剪刀" class="choice" onclick="playGame('剪刀')">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand-rock.png" alt="石頭" class="choice" onclick="playGame('石頭')">
+        <img src="https://img.icons8.com/ios-filled/100/000000/hand.png" alt="布" class="choice" onclick="playGame('布')">
+    </div>
+    
+    <div id="scoreboard">
+        玩家得分: <span id="player-score">0</span> | 電腦得分: <span id="computer-score">0</span>
+    </div>
+
+    <script>
+        let playerScore = 0;
+        let computerScore = 0;
+
+        function playGame(playerChoice) {
+            const choices = ['剪刀', '石頭', '布'];
+            const computerChoice = choices[Math.floor(Math.random() * 3)];
+
+            let result = '';
+            let icon = '';
+            let title = '';
+            
+            if (playerChoice === computerChoice) {
+                result = '平手！';
+                icon = 'info';
+                title = '平手';
+            } else if (
+                (playerChoice === '剪刀' && computerChoice === '布') ||
+                (playerChoice === '石頭' && computerChoice === '剪刀') ||
+                (playerChoice === '布' && computerChoice === '石頭')
+            ) {
+                result = '你贏了！';
+                icon = 'success';
+                title = '贏了';
+                playerScore++;
+            } else {
+                result = '你輸了！';
+                icon = 'error';
+                title = '輸了';
+                computerScore++;
+            }
+
+            updateScoreboard();
+            if (!checkWinner()) {
+                Swal.fire({
+                    title: title,
+                    text: `你選擇了 ${playerChoice}，電腦選擇了 ${computerChoice}。${result}`,
+                    icon: icon,
+                    showCancelButton: true,  // 顯示第二個按鈕
+                    confirmButtonText: '再玩一次',
+                    cancelButtonText: '查看結果'
+                }).then((result) => {
+                    if (result.isDismissed) {
+                        Swal.fire({
+                            title: '當前比分',
+                            text: `玩家得分: ${playerScore}\n電腦得分: ${computerScore}`,
+                            icon: 'info',
+                            confirmButtonText: '好吧'
+                        });
+                    }
+                });
+            }
+        }
+
+        function updateScoreboard() {
+            document.getElementById('player-score').textContent = playerScore;
+            document.getElementById('computer-score').textContent = computerScore;
+        }
+
+        function checkWinner() {
+            if (playerScore === 3) {
+                Swal.fire({
+                    title: '你贏得了比賽！',
+                    text: '恭喜你贏了三次！比賽重新開始。',
+                    icon: 'success',
+                    confirmButtonText: '繼續'
+                }).then(() => resetGame());
+                return true;
+            } else if (computerScore === 3) {
+                Swal.fire({
+                    title: '電腦贏得了比賽！',
+                    text: '電腦贏了三次！比賽重新開始。',
+                    icon: 'error',
+                    confirmButtonText: '繼續'
+                }).then(() => resetGame());
+                return true;
+            }
+            return false;
+        }
+
+        function resetGame() {
+            playerScore = 0;
+            computerScore = 0;
+            updateScoreboard();
+        }
+    </script>
+</body>
+</html>
